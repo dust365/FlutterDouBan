@@ -28,7 +28,10 @@ dependencies:
 
   palette_generator: ^0.3.2
 
-  flutter_webview_plugin: 0.4.0
+  #  flutter_webview_plugin: 0.4.0
+  flutter_webview_plugin:
+    git: https://github.com/nuc134r/flutter_webview_plugin.git
+
 
   webview_flutter: ^3.0.0
 
@@ -38,7 +41,7 @@ dependencies:
   # 用来模拟网络返回的数据，这些数据是真实的，这里模拟
   dio: ^4.0.4
 
-  fluttertoast: ^8.0.8
+  fluttertoast: ^8.1.1
 
   cached_network_image: ^3.2.0
 
