@@ -29,7 +29,8 @@ class HttpRequest {
 
   Future<dynamic> get(String uri, {Map<String, String> headers}) async {
     try {
-      http.Response response = await http.get(baseUrl + uri, headers: headers);
+      var url = Uri.parse(baseUrl + uri);
+      http.Response response = await http.get(url, headers: headers);
       final statusCode = response.statusCode;
       final body = response.body;
       print('[uri=$uri][statusCode=$statusCode][response=$body]');
@@ -43,7 +44,8 @@ class HttpRequest {
 
   Future<dynamic> getResponseBody(String uri, {Map<String, String> headers}) async {
     try {
-      http.Response response = await http.get(baseUrl + uri, headers: headers);
+      var url = Uri.parse(baseUrl + uri);
+      http.Response response = await http.get(url, headers: headers);
       final statusCode = response.statusCode;
       final body = response.body;
 //      var result = Convert.jsonDecode(body);
@@ -57,7 +59,8 @@ class HttpRequest {
 
   Future<dynamic> post(String uri, dynamic body, {Map<String, String> headers}) async {
     try {
-      http.Response response = await http.post(baseUrl + uri, body: body, headers: headers);
+      var url = Uri.parse(baseUrl + uri);
+      http.Response response = await http.post(url, body: body, headers: headers);
       final statusCode = response.statusCode;
       final responseBody = response.body;
       var result = Convert.jsonDecode(responseBody);

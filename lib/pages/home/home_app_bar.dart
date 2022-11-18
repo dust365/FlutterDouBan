@@ -675,6 +675,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         // These are the widgets to put in each tab in the tab bar.
         tabs: bottomList
             .map((String name) => Container(
+                  alignment: Alignment.topLeft,
                   child: Text(
                     name,
                     style: TextStyle(color: color, fontSize: 17.0),

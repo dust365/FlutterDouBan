@@ -124,7 +124,7 @@ class CountDownWidget extends StatefulWidget {
 }
 
 class _CountDownWidgetState extends State<CountDownWidget> {
-  var _seconds = 6;
+  var _seconds = 0;
   Timer _timer;
 
   @override

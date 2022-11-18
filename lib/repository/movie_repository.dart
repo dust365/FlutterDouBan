@@ -41,7 +41,8 @@ class MovieRepository {
 
   Future<MovieRepository> requestAPI() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool useNetData = prefs.getBool(CacheKey.USE_NET_DATA) ?? false;
+    // bool useNetData = prefs.getBool(CacheKey.USE_NET_DATA) ?? false;
+    bool useNetData = false;
     if (useNetData) {
       _request = HttpRequest(API.BASE_URL);
     } else {

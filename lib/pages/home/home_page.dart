@@ -1,3 +1,4 @@
+import 'package:doubanapp/pages/home/dynamic_page.dart';
 import 'package:flutter/material.dart';
 import 'package:doubanapp/widgets/search_text_field_widget.dart';
 import 'package:doubanapp/pages/home/home_app_bar.dart' as myapp;
@@ -53,6 +54,9 @@ DefaultTabController getWidget() {
                     margin: const EdgeInsets.only(left: 15.0, right: 15.0),
                     onTab: () {
                       MyRouter.push(context, MyRouter.searchPage, '影视作品中你难忘的离别');
+                      API().getEveryday((value) {
+
+                      });
                     },
                   ),
                   alignment: Alignment(0.0, 0.0),
@@ -67,22 +71,29 @@ DefaultTabController getWidget() {
               // not actually aware of the precise position of the inner
               // scroll views.
               bottomTextString: _tabs,
-              bottom: TabBar(
+              bottom:PreferredSize(preferredSize:const Size.fromHeight(48), child: Material( color: Colors.red,child: TabBar(
+                isScrollable: true,
+                indicatorColor: Colors.black,//选中时下划线颜色,如果使用了indicator这里设置无效
+                // controller: _tabController,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.yellow,
+                indicatorWeight: 2,
                 // These are the widgets to put in each tab in the tab bar.
                 tabs: _tabs
                     .map((String name) => Container(
-                          child: Text(
-                            name,
-                          ),
-                          padding: const EdgeInsets.only(bottom: 5.0),
-                        ))
+                  color: Colors.grey,
+                  child: Text(
+                    name,
+                  ),
+                  padding: const EdgeInsets.only(bottom: 5.0),
+                ))
                     .toList(),
-              ),
+              ),), ),
             ),
           ),
         ];
       },
-      body: TabBarView(
+      body: TabBarView(    //真正页面
         // These are the contents of the tab views, below the tabs.
         children: _tabs.map((String name) {
           return SliverContainer(
@@ -94,6 +105,21 @@ DefaultTabController getWidget() {
   );
 }
 
+class  TabLayoutView extends StatefulWidget  {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+  }
+
+
+
+
+}
+
+
+/**
+ * 动态 页面的核心页面
+ */
 class SliverContainer extends StatefulWidget {
   final String name;
 
@@ -123,16 +149,24 @@ class _SliverContainerState extends State<SliverContainer> {
   List<Subject> list;
 
   void requestAPI() async {
-//    var _request = HttpRequest(API.BASE_URL);
-//    int start = math.Random().nextInt(220);
-//    final Map result = await _request.get(API.TOP_250 + '?start=$start&count=30');
-//    var resultList = result['subjects'];
+   // var _request = HttpRequest(API.BASE_URL);
+   // int start = math.Random().nextInt(220);
+   // final Map result = await _request.get(API.TOP_250 + '?start=$start&count=30');
+   // var resultList = result['subjects'];
 
-    var _request = MockRequest();
-    var result = await _request.get(API.TOP_250);
-    var resultList = result['subjects'];
-    list = resultList.map<Subject>((item) => Subject.fromMap(item)).toList();
-    setState(() {});
+    // var _request = MockRequest();
+    // var result = await _request.get(API.TOP_250);
+    // var resultList = result['subjects'];
+    // list = resultList.map<Subject>((item) => Subject.fromMap(item)).toList();
+    // setState(() {});
+
+   API().getEveryday((value) {
+     setState(() {
+       list=value;
+     });
+   });
+
+
   }
 
   @override
@@ -142,7 +176,8 @@ class _SliverContainerState extends State<SliverContainer> {
 
   getContentSliver(BuildContext context, List<Subject> list) {
     if (widget.name == _tabs[0]) {
-      return _loginContainer(context);
+      // return _loginContainer(context);
+      return  DynamicPage(key: PageStorageKey<String>('DynamicPage'));
     }
 
     print('getContentSliver');
@@ -192,7 +227,8 @@ class _SliverContainerState extends State<SliverContainer> {
   ///列表的普通单个item
   getCommonItem(List<Subject> items, int index) {
     Subject item = items[index];
-    bool showVideo = index == 1 || index == 3;
+    // bool showVideo = index == 1 || index == 3;
+    bool showVideo =false;
     return Container(
       height: showVideo ? contentVideoHeight : singleLineImgHeight,
       color: Colors.white,
@@ -209,7 +245,7 @@ class _SliverContainerState extends State<SliverContainer> {
             children: <Widget>[
               CircleAvatar(
                 radius: 25.0,
-                backgroundImage: NetworkImage(item.casts[0].avatars.medium),
+                backgroundImage: NetworkImage(item.user.avatar),
                 backgroundColor: Colors.white,
               ),
               Padding(
@@ -225,12 +261,20 @@ class _SliverContainerState extends State<SliverContainer> {
                   ),
                   alignment: Alignment.centerRight,
                 ),
+
               )
             ],
           ),
           Expanded(
               child: Container(
-            child: showVideo ? getContentVideo(index) : getItemCenterImg(item),
+
+
+
+
+          
+
+
+            child: showVideo ? getContentVideo(index,item) : getItemCenterImg(item),
           )),
           Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0),
@@ -274,10 +318,10 @@ class _SliverContainerState extends State<SliverContainer> {
               )),
         ),
         Expanded(
-          child: RadiusImg.get(item.casts[1].avatars.medium, null, radius: 0.0),
+          child: RadiusImg.get(item.user.avatar, null, radius: 0.0),
         ),
         Expanded(
-          child: RadiusImg.get(item.casts[2].avatars.medium, null,
+          child: RadiusImg.get(item.user.avatar, null,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(5.0),
@@ -286,14 +330,19 @@ class _SliverContainerState extends State<SliverContainer> {
       ],
     );
   }
-
-  getContentVideo(int index) {
+///视频的view
+  getContentVideo(int index,Subject item) {
     if(!mounted){
       return Container();
     }
+    // return VideoWidget(
+    //   index == 1 ? Constant.URL_MP4_DEMO_0 :  Constant.URL_MP4_DEMO_1,
+    //   showProgressBar: false,
+    // );
     return VideoWidget(
       index == 1 ? Constant.URL_MP4_DEMO_0 :  Constant.URL_MP4_DEMO_1,
       showProgressBar: false,
+      previewImgUrl: item.images.large,
     );
   }
 }

@@ -21,7 +21,8 @@ class Subject {
   Rating rating;
   var genres;
   var title;
-  List<Cast> casts;
+  // List<Cast> casts;
+   User user;
   var durations;
   var collect_count;
   var mainland_pubdate;
@@ -42,14 +43,14 @@ class Subject {
     genres = map['genres'];
     title = map['title'];
     var castMap = map['casts'];
-    casts = _converCasts(castMap);
+    // casts = _converCasts(castMap);
     collect_count = map['collect_count'];
     original_title = map['original_title'];
     subtype = map['subtype'];
     directors = map['directors'];
     year = map['year'];
-    var img = map['images'];
-    images = Images(img['small'], img['large'], img['medium']);
+    // var img = map['images'];
+    images = Images(map['cover_image_url'], map['vertical_image_url'], map['square_image_url']);
     alt = map['alt'];
     id = map['id'];
     durations = map['durations'];
@@ -58,9 +59,35 @@ class Subject {
     pubdates = map['pubdates'];
   }
 
+  Subject.fromMap2(Map<String, dynamic> map) {
+    // var rating = map['rating'];
+    // this.rating = Rating(rating['average'], rating['max']);
+    // genres = map['genres'];
+    title = map['title'];
+    var userMap = map['user'];
+    user = User.fromMap(userMap);
+    // collect_count = map['collect_count'];
+    // original_title = map['original_title'];
+    // subtype = map['subtype'];
+    // directors = map['directors'];
+    // year = map['year'];
+    // // var img = map['images'];
+    images = Images(map['cover_image_url'], map['vertical_image_url'], map['square_image_url']);
+    // alt = map['alt'];
+    id = map['id'];
+    // durations = map['durations'];
+    // mainland_pubdate = map['mainland_pubdate'];
+    // has_video = map['has_video'];
+    // pubdates = map['pubdates'];
+  }
+
   _converCasts(casts) {
     return casts.map<Cast>((item)=>Cast.fromMap(item)).toList();
   }
+  _converUser(user) {
+    return user.map<User>((item)=>User.fromMap(item));
+  }
+
 
 }
 
@@ -101,7 +128,41 @@ class Cast {
     }
 
   }
+
+  Cast.fromMap2(Map<String, dynamic> map) {
+    id = map['user_id'];
+    name_en = map['nickname'];
+    name = map['nickname'];
+    alt = map['nickname'];
+    var tmp = map['avatar'];
+    if(tmp == null){
+      avatars = null;
+    }else{
+      avatars = Avatar(tmp, tmp, tmp);
+    }
+
+  }
 }
+
+
+
+class User {
+  var id;
+  var name;
+  var avatar;
+
+  User(this.id, this.name, this.avatar);
+
+  User.fromMap(Map<String, dynamic> map) {
+    id = map['user_id'];
+    name = map['nickname'];
+    avatar = map['avatar'];
+  }
+
+
+
+}
+
 
 class Avatar {
   var medium;

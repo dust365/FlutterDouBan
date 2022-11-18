@@ -192,23 +192,24 @@ class DescWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var casts = subject.casts;
-    var sb = StringBuffer();
-    var genres = subject.genres;
-    for (var i = 0; i < genres.length; i++) {
-      sb.write('${genres[i]}  ');
-    }
-    sb.write("/ ");
-    List<String> list = List.generate(
-        casts.length, (int index) => casts[index].name.toString());
-
-    for (var i = 0; i < list.length; i++) {
-      sb.write('${list[i]} ');
-    }
+    var name = subject.user.name;
+    // var casts = subject.casts;
+    // var sb = StringBuffer();
+    // var genres = subject.genres;
+    // for (var i = 0; i < genres.length; i++) {
+    //   sb.write('${genres[i]}  ');
+    // }
+    // sb.write("/ ");
+    // List<String> list = List.generate(
+    //     casts.length, (int index) => casts[index].name.toString());
+    //
+    // for (var i = 0; i < list.length; i++) {
+    //   sb.write('${list[i]} ');
+    // }
     return Container(
       alignment: Alignment.topLeft,
       child: Text(
-        sb.toString(),
+        name.toString(),
         softWrap: true,
         textDirection: TextDirection.ltr,
         style:

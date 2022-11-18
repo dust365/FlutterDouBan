@@ -17,7 +17,32 @@ import 'package:palette_generator/palette_generator.dart';
 typedef RequestCallBack<T> = void Function(T value);
 
 class API {
-  static const BASE_URL = 'https://api.douban.com';
+  // static const BASE_URL = 'https://api.douban.com';
+  //快看漫画的
+  static const BASE_URL = 'https://www.kuaikanmanhua.com';
+
+
+  /// 快看--》每日更新    pos 星期几 0~6
+  static const EVERY_DAY_UPDATE = '/v2/pweb/daily/topics?pos=6';
+
+
+  void getEveryday(RequestCallBack requestCallBack) async {
+    final Map result = await _request.get(EVERY_DAY_UPDATE);
+    print("result = $result");
+    var data = result['data'];
+    print("data = $data");
+    var topicList=data['topics'];
+    print("topicJson ---> = $topicList");
+    List<Subject> list = topicList.map<Subject>((item) => Subject.fromMap2(item)).toList();
+    requestCallBack(list);
+  }
+
+
+
+
+
+
+
 
   ///TOP250
   static const String TOP_250 = '/v2/movie/top250';

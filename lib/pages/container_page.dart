@@ -49,10 +49,15 @@ class _ContainerPageState extends State<ContainerPage> {
     print('initState _ContainerPageState');
     if(pages == null){
       pages = [
+        //首页
         HomePage(),
+        //书影音
         BookAudioVideoPage(),
+        //小组
         GroupPage(),
+        //市集
         shopPageWidget,
+        //我的
         PersonCenterPage()
       ];
     }
@@ -64,13 +69,15 @@ class _ContainerPageState extends State<ContainerPage> {
             width: 30.0,
             height: 30.0,
           ),
-          title: Text(
-            item.name,
-            style: TextStyle(fontSize: 10.0),
-          ),
+          label: item.name,
+          // Text(
+          //   item.name,
+          //   style: TextStyle(fontSize: 10.0),
+          // ),
           activeIcon:
-          Image.asset(item.activeIcon, width: 30.0, height: 30.0)))
-          .toList();
+          Image.asset(item.activeIcon, width: 30.0, height: 30.0),
+      )
+      ).toList();
     }
 
   }
