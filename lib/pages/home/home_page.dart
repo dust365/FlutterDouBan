@@ -22,6 +22,56 @@ class HomePage extends StatelessWidget {
 
 var _tabs = ['动态', '推荐'];
 
+DefaultTabController getWidget1() {
+  return DefaultTabController(
+    initialIndex: 1,
+    length: _tabs.length, // This is the number of tabs.
+    child:
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SearchTextFieldWidget(
+              hintText: '影视作品中你难忘的离别',
+              margin: const EdgeInsets.only(left: 15.0, right: 15.0),
+            ),
+            TabBar(
+              isScrollable: true,
+              indicatorColor: Colors.black,
+              //选中时下划线颜色,如果使用了indicator这里设置无效
+              // controller: _tabController,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.yellow,
+              indicatorWeight: 2,
+              // These are the widgets to put in each tab in the tab bar.
+              tabs: _tabs
+                  .map((String name) => Container(
+                color: Colors.grey,
+                child: Text(
+                  name,
+                ),
+                padding: const EdgeInsets.only(bottom: 5.0),
+              ))
+                  .toList(),
+            ),
+            TabBarView(
+              //真正页面
+              // These are the contents of the tab views, below the tabs.
+              children: _tabs.map((String name) {
+                return SliverContainer(
+                  name: name,
+                );
+              }).toList(),
+            ),
+          ],
+        )
+
+
+
+
+
+  );
+}
+
 DefaultTabController getWidget() {
   return DefaultTabController(
     initialIndex: 1,
@@ -46,17 +96,16 @@ DefaultTabController getWidget() {
               titleSpacing: 0.0,
               backgroundColor: Colors.white,
               flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.pin,
+                collapseMode: CollapseMode.none,
                 background: Container(
                   color: Colors.green,
                   child: SearchTextFieldWidget(
                     hintText: '影视作品中你难忘的离别',
                     margin: const EdgeInsets.only(left: 15.0, right: 15.0),
                     onTab: () {
-                      MyRouter.push(context, MyRouter.searchPage, '影视作品中你难忘的离别');
-                      API().getEveryday((value) {
-
-                      });
+                      MyRouter.push(
+                          context, MyRouter.searchPage, '影视作品中你难忘的离别');
+                      API().getEveryday((value) {});
                     },
                   ),
                   alignment: Alignment(0.0, 0.0),
@@ -71,29 +120,38 @@ DefaultTabController getWidget() {
               // not actually aware of the precise position of the inner
               // scroll views.
               bottomTextString: _tabs,
-              bottom:PreferredSize(preferredSize:const Size.fromHeight(48), child: Material( color: Colors.red,child: TabBar(
-                isScrollable: true,
-                indicatorColor: Colors.black,//选中时下划线颜色,如果使用了indicator这里设置无效
-                // controller: _tabController,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.yellow,
-                indicatorWeight: 2,
-                // These are the widgets to put in each tab in the tab bar.
-                tabs: _tabs
-                    .map((String name) => Container(
-                  color: Colors.grey,
-                  child: Text(
-                    name,
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(48),
+                child: Material(
+                  color: Colors.red,
+                  child: TabBar(
+                    isScrollable: true,
+                    indicatorColor: Colors.black,
+                    //选中时下划线颜色,如果使用了indicator这里设置无效
+                    // controller: _tabController,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.yellow,
+                    indicatorWeight:1,
+                    // These are the widgets to put in each tab in the tab bar.
+                    tabs: _tabs
+                        .map((String name) => Container(
+                              alignment: Alignment.topLeft,
+                              color: Colors.grey,
+                              child: Text(
+                                name,
+                              ),
+                              padding: const EdgeInsets.only(bottom: 5.0),
+                            ))
+                        .toList(),
                   ),
-                  padding: const EdgeInsets.only(bottom: 5.0),
-                ))
-                    .toList(),
-              ),), ),
+                ),
+              ),
             ),
           ),
         ];
       },
-      body: TabBarView(    //真正页面
+      body: TabBarView(
+        //真正页面
         // These are the contents of the tab views, below the tabs.
         children: _tabs.map((String name) {
           return SliverContainer(
@@ -104,18 +162,6 @@ DefaultTabController getWidget() {
     ),
   );
 }
-
-class  TabLayoutView extends StatefulWidget  {
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-  }
-
-
-
-
-}
-
 
 /**
  * 动态 页面的核心页面
@@ -149,10 +195,10 @@ class _SliverContainerState extends State<SliverContainer> {
   List<Subject> list;
 
   void requestAPI() async {
-   // var _request = HttpRequest(API.BASE_URL);
-   // int start = math.Random().nextInt(220);
-   // final Map result = await _request.get(API.TOP_250 + '?start=$start&count=30');
-   // var resultList = result['subjects'];
+    // var _request = HttpRequest(API.BASE_URL);
+    // int start = math.Random().nextInt(220);
+    // final Map result = await _request.get(API.TOP_250 + '?start=$start&count=30');
+    // var resultList = result['subjects'];
 
     // var _request = MockRequest();
     // var result = await _request.get(API.TOP_250);
@@ -160,13 +206,11 @@ class _SliverContainerState extends State<SliverContainer> {
     // list = resultList.map<Subject>((item) => Subject.fromMap(item)).toList();
     // setState(() {});
 
-   API().getEveryday((value) {
-     setState(() {
-       list=value;
-     });
-   });
-
-
+    API().getEveryday((value) {
+      setState(() {
+        list = value;
+      });
+    });
   }
 
   @override
@@ -177,7 +221,7 @@ class _SliverContainerState extends State<SliverContainer> {
   getContentSliver(BuildContext context, List<Subject> list) {
     if (widget.name == _tabs[0]) {
       // return _loginContainer(context);
-      return  DynamicPage(key: PageStorageKey<String>('DynamicPage'));
+      return DynamicPage(key: PageStorageKey<String>('DynamicPage'));
     }
 
     print('getContentSliver');
@@ -228,7 +272,7 @@ class _SliverContainerState extends State<SliverContainer> {
   getCommonItem(List<Subject> items, int index) {
     Subject item = items[index];
     // bool showVideo = index == 1 || index == 3;
-    bool showVideo =false;
+    bool showVideo = false;
     return Container(
       height: showVideo ? contentVideoHeight : singleLineImgHeight,
       color: Colors.white,
@@ -261,20 +305,14 @@ class _SliverContainerState extends State<SliverContainer> {
                   ),
                   alignment: Alignment.centerRight,
                 ),
-
               )
             ],
           ),
           Expanded(
               child: Container(
-
-
-
-
-          
-
-
-            child: showVideo ? getContentVideo(index,item) : getItemCenterImg(item),
+            child: showVideo
+                ? getContentVideo(index, item)
+                : getItemCenterImg(item),
           )),
           Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0),
@@ -330,9 +368,10 @@ class _SliverContainerState extends State<SliverContainer> {
       ],
     );
   }
-///视频的view
-  getContentVideo(int index,Subject item) {
-    if(!mounted){
+
+  ///视频的view
+  getContentVideo(int index, Subject item) {
+    if (!mounted) {
       return Container();
     }
     // return VideoWidget(
@@ -340,12 +379,13 @@ class _SliverContainerState extends State<SliverContainer> {
     //   showProgressBar: false,
     // );
     return VideoWidget(
-      index == 1 ? Constant.URL_MP4_DEMO_0 :  Constant.URL_MP4_DEMO_1,
+      index == 1 ? Constant.URL_MP4_DEMO_0 : Constant.URL_MP4_DEMO_1,
       showProgressBar: false,
       previewImgUrl: item.images.large,
     );
   }
 }
+
 ///动态TAB
 _loginContainer(BuildContext context) {
   return Align(
