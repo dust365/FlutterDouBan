@@ -1,3 +1,4 @@
+import 'package:doubanapp/bean/dynamic_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:doubanapp/pages/movie/title_widget.dart';
 import 'package:doubanapp/pages/movie/today_play_movie_widget.dart';
@@ -31,18 +32,12 @@ class DynamicPage extends StatefulWidget {
 }
 
 class _DynamicPage extends State<DynamicPage>  with AutomaticKeepAliveClientMixin {
-  Widget titleWidget, hotSoonTabBarPadding;
-  HotSoonTabBar hotSoonTabBar;
-  List<Subject> hotShowBeans = List(); //影院热映
-  List<Subject> comingSoonBeans = List(); //即将上映
-  List<Subject> hotBeans = List(); //豆瓣榜单
-  List<SubjectEntity> weeklyBeans = List(); //一周口碑电影榜
-  List<Subject> top250Beans = List(); //Top250
-  var hotChildAspectRatio;
-  var comingSoonChildAspectRatio;
-  int selectIndex = 0; //选中的是热映、即将上映
-  var itemW;
-  var imgSize;
+  // Widget titleWidget, hotSoonTabBarPadding;
+
+  List<DynamicEntity> hotBeans = List(); //豆瓣榜单
+
+
+  var imgSize=100;
   List<String> todayUrls = [];
   TopItemBean weeklyTopBean, weeklyHotBean, weeklyTop250Bean;
   Color weeklyTopColor, weeklyHotColor, weeklyTop250Color;
@@ -52,37 +47,13 @@ class _DynamicPage extends State<DynamicPage>  with AutomaticKeepAliveClientMixi
   void initState() {
     super.initState();
     print('initState movie_page');
-    titleWidget = Padding(
-      padding: EdgeInsets.only(top: 10.0),
-      child: TitleWidget(),
-    );
 
-    hotSoonTabBar = HotSoonTabBar(
-      onTabCallBack: (index) {
-        setState(() {
-          selectIndex = index;
-        });
-      },
-    );
-
-    hotSoonTabBarPadding = Padding(
-      padding: EdgeInsets.only(top: 35.0, bottom: 15.0),
-      child: hotSoonTabBar,
-    );
     requestAPI();
   }
 
   @override
   Widget build(BuildContext context) {
     print('build movie_page');
-    if (itemW == null || imgSize <= 0) {
-      MediaQuery.of(context);
-      var w = MediaQuery.of(context).size.width;
-      imgSize = w / 5 * 3;
-      itemW = (w - 30.0 - 20.0) / 3;
-      hotChildAspectRatio = (377.0 / 674.0);
-      comingSoonChildAspectRatio = (377.0 / 742.0);
-    }
     return Stack(
       children: <Widget>[
         containerBody()
@@ -94,189 +65,14 @@ class _DynamicPage extends State<DynamicPage>  with AutomaticKeepAliveClientMixi
     );
   }
 
-  ///即将上映item
-  Widget _getComingSoonItem(Subject comingSoonBean, var itemW) {
-    if (comingSoonBean == null) {
-      return Container();
-    }
 
-    ///将2019-02-14转成02月14日
-    String mainland_pubdate = comingSoonBean.mainland_pubdate;
-    mainland_pubdate = mainland_pubdate.substring(5, mainland_pubdate.length);
-    mainland_pubdate = mainland_pubdate.replaceFirst(RegExp(r'-'), '月') + '日';
-    return GestureDetector(
-      child: Container(
-        alignment: Alignment.topLeft,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SubjectMarkImageWidget(
-              comingSoonBean.images.large,
-              width: itemW,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
-              child: Container(
-                width: double.infinity,
-                child: Text(
-                  comingSoonBean.title,
-
-                  ///文本只显示一行
-                  softWrap: false,
-
-                  ///多出的文本渐隐方式
-                  overflow: TextOverflow.fade,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            Container(
-                decoration: const ShapeDecoration(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: ColorConstant.colorRed277),
-                      borderRadius: BorderRadius.all(Radius.circular(2.0))),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 5.0,
-                    right: 5.0,
-                  ),
-                  child: Text(
-                    mainland_pubdate,
-                    style: TextStyle(
-                        fontSize: 8.0, color: ColorConstant.colorRed277),
-                  ),
-                ))
-          ],
-        ),
-      ),
-      onTap: () {
-        MyRouter.push(context, MyRouter.detailPage, comingSoonBean.id);
-      },
-    );
-  }
-
-  ///影院热映item
-  Widget _getHotMovieItem(Subject hotMovieBean, var itemW) {
-    if (hotMovieBean == null) {
-      return Container();
-    }
-    return GestureDetector(
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            SubjectMarkImageWidget(
-              hotMovieBean.images.large,
-              width: itemW,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 5.0),
-              child: Container(
-                width: double.infinity,
-                child: Text(
-                  hotMovieBean.title,
-
-                  ///文本只显示一行
-                  softWrap: false,
-
-                  ///多出的文本渐隐方式
-                  overflow: TextOverflow.fade,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            RatingBar(
-              hotMovieBean.rating.average,
-              size: 12.0,
-            )
-          ],
-        ),
-      ),
-      onTap: () {
-        MyRouter.push(context, MyRouter.detailPage, hotMovieBean.id);
-      },
-    );
-  }
-
-  int _getChildCount() {
-    if (selectIndex == 0) {
-      return hotShowBeans.length;
-    } else {
-      return comingSoonBeans.length;
-    }
-  }
-
-  double _getRadio() {
-    if (selectIndex == 0) {
-      return hotChildAspectRatio;
-    } else {
-      return comingSoonChildAspectRatio;
-    }
-  }
-
-  ///图片+订阅+名称+星标
-  SliverGrid getCommonSliverGrid(List<Subject> hotBeans) {
-    return SliverGrid(
-        delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-          return _getHotMovieItem(hotBeans[index], itemW);
-        }, childCount: math.min(hotBeans.length, 6)),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 10.0,
-            mainAxisSpacing: 0.0,
-            childAspectRatio: hotChildAspectRatio));
-  }
-
-  ///R角图片
-  getCommonImg(String url, OnTab onTab) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: EdgeInsets.only(top: 15.0),
-        child: CacheImgRadius(
-          imgUrl: url,
-          radius: 5.0,
-          onTab: () {
-            if (onTab != null) {
-              onTab();
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  MovieRepository repository = MovieRepository();
   bool loading = false;
-
   void requestAPI() async {
-    Future(() => (repository.requestAPI())).then((value) {
-      hotShowBeans = value.hotShowBeans;
-      comingSoonBeans = value.comingSoonBeans;
-      hotBeans = value.hotBeans;
-      weeklyBeans = value.weeklyBeans;
-      top250Beans = value.top250Beans;
-      todayUrls = value.todayUrls;
-      weeklyTopBean = value.weeklyTopBean;
-      weeklyHotBean = value.weeklyHotBean;
-      weeklyTop250Bean = value.weeklyTop250Bean;
-      weeklyTopColor = value.weeklyTopColor;
-      weeklyHotColor = value.weeklyHotColor;
-      weeklyTop250Color = value.weeklyTop250Color;
-      todayPlayBg = value.todayPlayBg;
-      hotSoonTabBar.setCount(hotShowBeans);
-      hotSoonTabBar.setComingSoon(comingSoonBeans);
-//      hotTitle.setCount(hotBeans.length);
-//      topTitle.setCount(weeklyBeans.length);
-      setState(() {
-        loading = false;
-      });
+    API().getHotWord((value) {
+     hotBeans=value;
+     setState(() {
+       loading = false;
+     });
     });
   }
 
@@ -293,6 +89,7 @@ class _DynamicPage extends State<DynamicPage>  with AutomaticKeepAliveClientMixi
           SliverToBoxAdapter(
             child: Text("还没有友邻的动态，看看别人在说什么..."),
           ),
+          buildItemList(),
           // SliverToBoxAdapter(
           //   child: Padding(
           //     child:
@@ -338,18 +135,18 @@ class _DynamicPage extends State<DynamicPage>  with AutomaticKeepAliveClientMixi
           // getCommonImg(Constant.IMG_TMP1, (){
           //   MyRouter.pushNoParams(context, "http://www.flutterall.com");
           // }),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(top: 20.0, bottom: 15.0),
-              child: ItemCountTitle(
-                '豆瓣热门',
-                fontSize: 13.0,
-                count: hotBeans == null ? 0 : hotBeans.length,
-              ),
-            ),
-          ),
+          // SliverToBoxAdapter(
+          //   child: Padding(
+          //     padding: EdgeInsets.only(top: 20.0, bottom: 15.0),
+          //     child: ItemCountTitle(
+          //       '豆瓣热门',
+          //       fontSize: 13.0,
+          //       count: hotBeans == null ? 0 : hotBeans.length,
+          //     ),
+          //   ),
+          // ),
           // getCommonSliverGrid(hotBeans),
-          getCommonImg(Constant.IMG_TMP2, null),
+          // getCommonImg(Constant.IMG_TMP2, null),
           // SliverToBoxAdapter(
           //   child: Padding(
           //     padding: EdgeInsets.only(top: 20.0, bottom: 15.0),
@@ -359,31 +156,31 @@ class _DynamicPage extends State<DynamicPage>  with AutomaticKeepAliveClientMixi
           //     ),
           //   ),
           // ),
-          SliverToBoxAdapter(
-            child: Container(
-              height: imgSize,
-              child: ListView(
-                children: [
-                  TopItemWidget(
-                    title: '一周口碑电影榜',
-                    bean: weeklyTopBean,
-                    partColor: weeklyTopColor,
-                  ),
-                  TopItemWidget(
-                    title: '一周热门电影榜',
-                    bean: weeklyHotBean,
-                    partColor: weeklyHotColor,
-                  ),
-                  TopItemWidget(
-                    title: '豆瓣电影 Top250',
-                    bean: weeklyTop250Bean,
-                    partColor: weeklyTop250Color,
-                  )
-                ],
-                scrollDirection: Axis.horizontal,
-              ),
-            ),
-          )
+          // SliverToBoxAdapter(
+          //   child: Container(
+          //     height: 100,
+          //     child: ListView(
+          //       children: [
+          //         TopItemWidget(
+          //           title: '一周口碑电影榜',
+          //           bean: weeklyTopBean,
+          //           partColor: weeklyTopColor,
+          //         ),
+          //         TopItemWidget(
+          //           title: '一周热门电影榜',
+          //           bean: weeklyHotBean,
+          //           partColor: weeklyHotColor,
+          //         ),
+          //         TopItemWidget(
+          //           title: '豆瓣电影 Top250',
+          //           bean: weeklyTop250Bean,
+          //           partColor: weeklyTop250Color,
+          //         )
+          //       ],
+          //       scrollDirection: Axis.horizontal,
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );
@@ -391,9 +188,95 @@ class _DynamicPage extends State<DynamicPage>  with AutomaticKeepAliveClientMixi
 
   @override
   bool get wantKeepAlive => true;
+
+
+  //Build
+  Widget buildItemList(){
+    var screenW = MediaQuery.of(context).size.width;
+    var itemH = screenW/16*9/2;
+    return SliverFixedExtentList(delegate:  SliverChildBuilderDelegate(
+          (_, index) => _getItem(hotBeans[index]),
+      childCount: _getChildCount(),
+    ), itemExtent: itemH);
+  }
+
+
+  ///影院热映item
+  Widget _getItem(DynamicEntity bean) {
+    var screenW = MediaQuery.of(context).size.width;
+    if (bean == null) {
+      return Container();
+    }
+    return GestureDetector(
+      child:Padding(
+        padding:EdgeInsets.only(top: 5.0,bottom: 5.0),
+        child: DecoratedBox(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors:[Colors.red,Colors.orange.shade700]), //背景渐变
+            borderRadius: BorderRadius.circular(15.0), //3像素圆角
+            boxShadow: [ //阴影
+              BoxShadow(
+                  color:Colors.black54,
+                  offset: Offset(2.0,2.0),
+                  blurRadius: 4.0
+              )
+            ]
+        ),
+        child: Stack(
+          // textDirection:TextDirection.ltr ,
+          alignment: Alignment.center,
+          fit: StackFit.expand, //未定位widget占满Stack整个空间
+           children: <Widget>[
+
+             ClipRRect(
+                 borderRadius: BorderRadius.circular(15.0), //3像素圆角
+               child:Image.network(
+                 bean.imageUrl,
+                 fit: BoxFit.cover,
+                 // width: 50.00,
+                 // height: 100.00,
+               )
+             ),
+
+            Positioned(
+              top: 5.0,
+              left: 15.0,
+              child:  Text(
+                  bean.title,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10,
+
+                  ),
+                ),
+            ),
+             Positioned(
+                 right: 10,
+                 child:Text(">",style: TextStyle( fontSize: 20),)
+             )
+          ],
+        ),
+      ),
+
+    ) , onTap: () {
+      MyRouter.push(context, MyRouter.detailPage, 100);
+    });
+  }
+
+  int _getChildCount() {
+    return hotBeans.length;
+  }
+
+
 }
 
 typedef OnTab = void Function();
+
+
+
+
+
+
 //
 //var loadingBody = new Container(
 //  alignment: AlignmentDirectional.center,

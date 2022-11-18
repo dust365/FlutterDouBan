@@ -1,3 +1,4 @@
+import 'package:doubanapp/bean/dynamic_entity.dart';
 import 'package:doubanapp/http/http_request.dart';
 
 //import 'package:doubanapp/bean/MovieBean.dart';
@@ -24,8 +25,6 @@ class API {
 
   /// 快看--》每日更新    pos 星期几 0~6
   static const EVERY_DAY_UPDATE = '/v2/pweb/daily/topics?pos=6';
-
-
   void getEveryday(RequestCallBack requestCallBack) async {
     final Map result = await _request.get(EVERY_DAY_UPDATE);
     print("result = $result");
@@ -38,6 +37,19 @@ class API {
   }
 
 
+
+  /// 快看--》热词
+  static const HOT_WORD = '/search/mini/hot_word?&page=1&size=10';
+  void getHotWord(RequestCallBack requestCallBack) async {
+    final Map result = await _request.get(HOT_WORD);
+    print("result = $result");
+    var hits = result['hits'];
+    print("hits = $hits");
+    var hotWord=hits['hot_word'];
+    print("hot_wordJson ---> = $hotWord");
+    List<DynamicEntity> list = hotWord.map<DynamicEntity>((item) => DynamicEntity.fromMap(item)).toList();
+    requestCallBack(list);
+  }
 
 
 

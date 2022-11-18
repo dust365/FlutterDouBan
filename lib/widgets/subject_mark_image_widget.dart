@@ -18,6 +18,51 @@ class SubjectMarkImageWidget extends StatefulWidget {
       {Key key, this.markAdd, this.width = 150.0})
       : super(key: key);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   @override
   State<StatefulWidget> createState() {
     height = this.width / 150.0 * 210.0;
