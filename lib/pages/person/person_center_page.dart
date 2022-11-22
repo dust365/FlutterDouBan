@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:doubanapp/constant/cache_key.dart';
 import 'package:doubanapp/main.dart';
+
+import '../../router.dart';
 typedef VoidCallback = void Function();
 
 ///个人中心
@@ -12,20 +14,61 @@ class PersonCenterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('build PersonCenterPage');
+  var screenW= MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
           child: Padding(
-            padding: EdgeInsets.only(top: 10.0),
+            padding: EdgeInsets.only(top: 0.0),
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               shrinkWrap: false,
               slivers: <Widget>[
                 SliverAppBar(
-                  backgroundColor: Colors.transparent,
-                  flexibleSpace: HeartImgWidget(Image.asset(
-                      Constant.ASSETS_IMG + 'bg_person_center_default.webp')),
-                  expandedHeight: 200.0,
+                  backgroundColor: Colors.grey,
+                  floating: false,
+                  snap: false,
+                  expandedHeight: 200,
+                  // forceElevated: innerBoxIsScrolled,
+                  flexibleSpace:  Stack(
+                    fit: StackFit.loose,
+                    alignment: Alignment.topLeft,
+                    children: [
+
+                      // Positioned(child: c)
+                      Container(
+                        color: Colors.red,
+                          width: double.infinity,
+                          child: Image.network(Constant.DEFAULT_AVATAR_BG,fit: BoxFit.cover,)
+                      ),
+                      GestureDetector(
+                          child:Container(
+                        margin: EdgeInsets.only(top: 20.0,left: 15.0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 2),
+                            borderRadius: BorderRadius.all(Radius.circular(150)),
+                        ),
+                          child:ClipOval(
+                           clipBehavior:Clip.hardEdge ,
+                          // borderRadius: BorderRadius.circular(15.0), //3像素圆角
+                          child:Image.network(
+                            Constant.DEFAULT_AVATAR_URL,
+                            fit: BoxFit.cover,
+                            width: 80.0,
+                            cacheWidth: 50,
+                            height: 80.0,
+
+                          )
+                      )),
+                       onTap:() {
+                         MyRouter.push(context, MyRouter.detailPage, 100);
+                       }
+                      ),
+                    ],
+                  ),
+                  // HeartImgWidget(Image.network(
+                  //     Constant.DEFAULT_AVATAR_URL)),
+                  // expandedHeight: 200.0,
                 ),
                 SliverToBoxAdapter(
                   child: Row(
@@ -49,16 +92,16 @@ class PersonCenterPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 100.0,
-                    alignment: Alignment.center,
-                    child: Text(
-                      '暂无新提醒',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                ),
+                // SliverToBoxAdapter(
+                //   child: Container(
+                //     height: 100.0,
+                //     alignment: Alignment.center,
+                //     child: Text(
+                //       '暂无新提醒',
+                //       style: TextStyle(color: Colors.grey),
+                //     ),
+                //   ),
+                // ),
                 _divider(),
                 SliverToBoxAdapter(
                   child: Padding(

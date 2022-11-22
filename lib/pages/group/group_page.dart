@@ -47,16 +47,24 @@ class _GroupWidgetState extends State<_GroupWidget> {
   @override
   void initState() {
     super.initState();
-    Future(() {
-      return _request.get(API.IN_THEATERS);
-    }).then((result) {
-      var resultList = result['subjects'];
+
+    API().getEveryday((value) {
+      list=value;
       setState(() {
-        list =
-            resultList.map<Subject>((item) => Subject.fromMap(item)).toList();
         loading = false;
       });
     });
+
+    // Future(() {
+    //   return _request.get(API.IN_THEATERS);
+    // }).then((result) {
+    //   var resultList = result['subjects'];
+    //   setState(() {
+    //     list =
+    //         resultList.map<Subject>((item) => Subject.fromMap(item)).toList();
+    //     loading = false;
+    //   });
+    // });
   }
 
   @override
@@ -93,7 +101,7 @@ class _GroupWidgetState extends State<_GroupWidget> {
       behavior: HitTestBehavior.translucent,
       child: Row(
         children: <Widget>[
-          RadiusImg.get(bean.images.small, 50.0, radius: 3.0),
+          RadiusImg.get(bean.images.small, 100.0, radius: 9.0),
           Expanded(
             child: Container(
               alignment: Alignment.topLeft,
@@ -106,14 +114,14 @@ class _GroupWidgetState extends State<_GroupWidget> {
                     style:
                         TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
                   ),
-                  Text(bean.pubdates != null ? bean.pubdates[0] : '', style: TextStyle(fontSize: 13.0))
+                  Text(bean.title*2, style: TextStyle(fontSize: 13.0))
                 ],
               ),
             ),
           ),
           Padding(
             padding: EdgeInsets.only(right: 10.0),
-            child: Text('${bean.collect_count}人', style: TextStyle(fontSize: 13.0),),
+            child: Text('${bean.id}人', style: TextStyle(fontSize: 13.0),),
           ),
           GestureDetector(
             child: Image.asset(

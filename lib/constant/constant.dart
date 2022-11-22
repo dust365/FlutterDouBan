@@ -21,4 +21,9 @@ class Constant {
 
   static String URL_MP4_DEMO_1 = 'https://www.w3school.com.cn/example/html5/mov_bbb.mp4';
 
+
+  //默认头像
+  static const String DEFAULT_AVATAR_BG = 'https://tn1-f2.kkmh.com/image/221019/wPprhfSuU.webp-w320.w.jpg';
+  static const String DEFAULT_AVATAR_URL = 'https://tn1-f2.kkmh.com/image/211022/VPjcMPaVs.webp-w750.jpg';
+
 }

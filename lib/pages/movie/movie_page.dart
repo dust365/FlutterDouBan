@@ -88,10 +88,10 @@ class _MoviePageState extends State<MoviePage>  with AutomaticKeepAliveClientMix
     return Stack(
       children: <Widget>[
         containerBody(),
-        Offstage(
-          child: LoadingWidget.getLoading(backgroundColor: Colors.transparent),
-          offstage: !loading,
-        )
+        // Offstage(
+        //   child: LoadingWidget.getLoading(backgroundColor: Colors.transparent),
+        //   offstage: !loading,
+        // )
       ],
     );
   }
