@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:doubanapp/constant/constant.dart';
 import 'package:doubanapp/widgets/image/heart_img_widget.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:doubanapp/constant/cache_key.dart';
 import 'package:doubanapp/main.dart';
@@ -61,7 +62,9 @@ class PersonCenterPage extends StatelessWidget {
                           )
                       )),
                        onTap:() {
-                         MyRouter.push(context, MyRouter.detailPage, 100);
+                         // MyRouter.push(context, MyRouter.detailPage, 100);
+                         // XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery)
+                         _selectImage();
                        }
                       ),
                     ],
@@ -132,6 +135,19 @@ class PersonCenterPage extends StatelessWidget {
             ),
           )),
     );
+  }
+
+  // 设置返回图片的其他参数
+  _selectImage() async {
+    XFile image = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      // maxHeight: 250,
+      // maxWidth: 250,
+    );
+    print("image name--->="+image.name);
+    print("image path--->="+image.path);
+    // if (image != null) this.image = image;
+    // setState(() {});
   }
 
   _rightArrow() {

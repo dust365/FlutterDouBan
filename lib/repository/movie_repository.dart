@@ -1,3 +1,4 @@
+import 'package:doubanapp/constant/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:doubanapp/bean/subject_entity.dart';
 import 'package:doubanapp/bean/top_item_bean.dart';
@@ -79,7 +80,7 @@ class MovieRepository {
     ///一周热门电影榜
     weeklyHotBean = TopItemBean.convertHotBeans(hotBeans);
     var paletteGenerator = await PaletteGenerator.fromImageProvider(
-        NetworkImage(hotBeans[0].images.medium));
+        NetworkImage(Constant.DEFAULT_AVATAR_URL));
     if (paletteGenerator != null && paletteGenerator.colors.isNotEmpty) {
       weeklyHotColor = (paletteGenerator.colors.toList()[0]);
     }
@@ -92,7 +93,7 @@ class MovieRepository {
         .toList();
     weeklyTopBean = TopItemBean.convertWeeklyBeans(weeklyBeans);
     paletteGenerator = await PaletteGenerator.fromImageProvider(
-        NetworkImage(weeklyBeans[0].subject.images.medium));
+        NetworkImage(Constant.DEFAULT_AVATAR_URL));
     if (paletteGenerator != null && paletteGenerator.colors.isNotEmpty) {
       weeklyTopColor = (paletteGenerator.colors.toList()[0]);
     }
@@ -102,12 +103,12 @@ class MovieRepository {
 
     ///这里使用了下面的模拟请求
 
-    if (useNetData) {
-      result = await _request.get(API.TOP_250 +
-          '?start=$start&count=7&apikey=0b2bdeda43b5688921839c8ecb20399b');
-    } else {
+    // if (useNetData) {
+    //   result = await _request.get(API.TOP_250 +
+    //       '?start=$start&count=7&apikey=0b2bdeda43b5688921839c8ecb20399b');
+    // } else {
       result = await _request.get(API.TOP_250);
-    }
+    // }
     resultList = result['subjects'];
     List<Subject> beans =
         resultList.map<Subject>((item) => Subject.fromMap(item)).toList();
